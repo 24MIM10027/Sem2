@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexa - Sign Up</title>
+  <style>
+   body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #30f3a8, #6bfffd);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .signup-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      width: 350px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .signup-container h1 {
+      margin-bottom: 25px;
+      font-size: 28px;
+      color: #333;
+      user-select: none;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+      position: relative; /* Needed for password eye */
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #555555;
+    }
+
+    .input-group input {
+      width: 92%;                /* Prevent full stretch */
+      padding: 12px;
+      padding-right: 40px;        /* Space for eye icon */
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+      transition: 0.3s;
+      box-sizing: border-box;
+    }
+
+    .input-group input:focus {
+      border-color: #3a8dff;
+      box-shadow: 0 0 6px rgba(58, 141, 255, 0.4);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 45px;
+      top: 67%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      user-select: none;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #3a8dff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #2f6fe0;
+    }
+
+    .extra-links {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .extra-links a {
+      color: #3a8dff;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h1>Create Account</h1>
+    <form id="signupForm">
+      <div class="input-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="Enter your full name" required>
+      </div>
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter your username" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <span class="toggle-password" id="togglePassword">👁️</span>
+      </div>
+      <div class="input-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+        <span class="toggle-password" id="toggleConfirmPassword">👁️</span>
+      </div>
+      <button type="submit" class="btn">Sign Up</button>
+      <div class="extra-links">
+        <p>Already have an account? <a href="Nexa-login.html">Login</a></p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Toggle Password Visibility
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    togglePassword.addEventListener('click', () => {
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+      togglePassword.textContent = passwordInput.type === 'password' ? '👁️' : '🙈';
+    });
+
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    toggleConfirmPassword.addEventListener('click', () => {
+      confirmPasswordInput.type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+      toggleConfirmPassword.textContent = confirmPasswordInput.type === 'password' ? '👁️' : '🙈';
+    });
+
+    // Signup Form Submit
+    const signupForm = document.getElementById('signupForm');
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById('fullName').value;
+      const username = document.getElementById('username').value;
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if(password !== confirmPassword){
+        alert('Passwords do not match!');
+        return;
+      }
+
+      try {
+        // Call backend API to register user
+        const response = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, username, password })
+        });
+
+        const data = await response.json();
+        if(data.success){
+          alert('Registration successful! Redirecting to Login page...');
+          window.location.href = 'Nexa-login.html';
+        } else {
+          alert(data.message);
+        }
+      } catch(err) {
+        console.log(err);
+        alert('Error connecting to server');
+      }
+    });
+  </script>
+</body>
+</html>
